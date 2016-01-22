@@ -12,6 +12,7 @@ import java.util.*;
  * Map<Point,Cnt>标识某个点周围的生命体数量
  * 每一次变化，记两个Map<Point,Cnt>，一个Map中是生物，另一个是空地。根据计算结果和规则，很容易得知这一轮过去后有哪些点在下一轮是生物
  * 生命体在代码中用human 标识
+ * test github
  */
 public class _NoBoundaryMap {
     public static final int MagicNum = 10000;
