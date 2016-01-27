@@ -2,12 +2,14 @@ package Solution;
 
 import Common.Gen;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by gaolei on 16/1/25.
- * 分桶方法求解
+ * 分桶方法求解，注意不要1000w个指纹中有重复的情况，
  */
 public class TongTuSouSuo_2 {
     /**
@@ -21,22 +23,22 @@ public class TongTuSouSuo_2 {
     private static Set<Integer>[] DIFF = new Set[5];
 
     /**
-     * 初始化的数据集,一共2^K个桶
+     * 初始化的数据集,一共2^K个桶,因为数据有重复，要用List
      */
-    private static Set<Integer>[] fingerPrint = new Set[1<<K];
+    private static List<Integer>[] fingerPrints = new List[1<<K];
 
     /**
      * 初始化生成计算用的常量Set数组DIFF
      */
     private static void initDIFF() {
         //生成常量Set DIFF
-        for(int i = 1; i <= 4; ++i) {
+        for(int i = 0; i <= 4; ++i) {
             DIFF[i] = new HashSet<Integer>();
         }
 
         for(int i = 0; i < (1<<K); ++i) {
             int oneCnt = OneInBit(i);
-            if(oneCnt >= 1 && oneCnt <= 4)
+            if(oneCnt >= 0 && oneCnt <= 4)
                 DIFF[oneCnt].add(i);
         }
     }
@@ -47,7 +49,7 @@ public class TongTuSouSuo_2 {
     private static void initFingerprint() {
         //初始化2^K个桶，让每个Set都不为NULL
         for(int i = 0; i < (1<<K); ++i) {
-            fingerPrint[i] = new HashSet<Integer>();
+            fingerPrints[i] = new ArrayList<Integer>();
         }
         // 生成1000w个指纹数据，前20位换算成int，为桶的编号，后20位计算为Int存入对应桶中
 
@@ -68,7 +70,7 @@ public class TongTuSouSuo_2 {
             int num = Integer.parseInt(numSb.toString(), 2);
 
             //把num放到编号为index的桶中
-            fingerPrint[index].add(num);
+            fingerPrints[index].add(num);
         }
     }
 
@@ -102,7 +104,6 @@ public class TongTuSouSuo_2 {
         initDIFF();
         initFingerprint();
         System.out.println("init finish");
-
         int maxSimilar = 0;
         int maxIndex = -1;
         int maxNum = 0;
@@ -112,27 +113,24 @@ public class TongTuSouSuo_2 {
             if(index % 100 == 0)
                 System.out.println("index:" + index);
             //这个桶内没有数据，直接continue；
-            if(fingerPrint[index].size() == 0)
+            if(fingerPrints[index].size() == 0)
                 continue;
 
             Set<Integer>[] similarSet = new Set[5];
-            for(int i = 1; i <= 4; ++i) {
+            //根据常量集合DIFF，计算和桶编号不同位数分别为0（即本桶）,1，2，3，4的桶编号, 放到similar集合中
+            for(int i = 0; i < 5; ++i) {
                 similarSet[i] = new HashSet<Integer>();
-            }
-
-            //根据常量集合DIFF，计算和桶编号相似位数分别为1，2，3，4的桶编号, 放到similar集合中
-            for(int i = 1; i <= 4; ++i) {
                 for(Integer mask : DIFF[i]) {
                     similarSet[i].add(index ^ mask);
                 }
             }
 
             // 计算本桶中每个指纹的similar指纹个数
-            for(Integer num : fingerPrint[index]) {
+            for(Integer num : fingerPrints[index]) {
                 int totSimilar = 0;
-                for(int i = 1; i <= 4; ++i) {
+                for(int i = 0; i < 5; ++i) {
                     for(Integer compareIndex : similarSet[i]) {
-                        for(Integer compareNum : fingerPrint[compareIndex]) {
+                        for(Integer compareNum : fingerPrints[compareIndex]) {
                             if(diffBitCount(num, compareNum) + i <= 4) {
                                 totSimilar++;
                             }
