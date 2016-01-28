@@ -18,7 +18,7 @@ public class TongTuSouSuo_2 {
     private static final int K = 20;
 
     /**
-     * DIFF为常量数组， 下标为1，2，3，4分别代表20位数字中1，2，3，4个位置为1，其余为0的数字的集合，这个常量集合用于计算桶的相似桶编号
+     * DIFF为常量数组， 下标为0,1，2，3，4分别代表20位数字中0,1，2，3，4个位置为1，其余为0的全部数字的集合，这个常量集合用于计算桶的相似桶编号
      */
     private static Set<Integer>[] DIFF = new Set[5];
 
@@ -125,7 +125,7 @@ public class TongTuSouSuo_2 {
                 }
             }
 
-            // 计算本桶中每个指纹的similar指纹个数
+            // 计算本桶中每个指纹的similar指纹个数，有个问题是把自己也算上了，不过我们找最大的，不影响结果
             for(Integer num : fingerPrints[index]) {
                 int totSimilar = 0;
                 for(int i = 0; i < 5; ++i) {
